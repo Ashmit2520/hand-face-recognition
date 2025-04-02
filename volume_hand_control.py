@@ -1,6 +1,6 @@
 #Author: Rhushil Vasavada
 #Volume Control With Hand Gestures
-#Description: This program manipulates a computer's volume bar (macOS only) 
+#Description: This program manipulates a computer's volume bar (macOS) 
 #based on a user's hand gestures using OpenCV library
 
 #import libraries and configure webcam
