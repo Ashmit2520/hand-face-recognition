@@ -1,9 +1,9 @@
-#Author: Rhushil Vasavada
-#Volume Control With Hand Gestures
-#Description: This program manipulates a computer's volume bar (macOS) 
-#based on a user's hand gestures using OpenCV library
+# Author: Rhushil Vasavada
+# Volume Control With Hand Gestures
+# Description: This program manipulates a computer's volume bar (macOS) 
+# based on a user's hand gestures using OpenCV library
 
-#import libraries and configure webcam
+# import libraries and configure webcam
 import cv2
 import time
 import numpy as np
@@ -18,20 +18,20 @@ cap.set(3, wCam)
 cap.set(4, hCam)
 pTime = 0
 
-#create a new hand detector to be used to recognize user's hand
+# create a new hand detector to be used to recognize user's hand
 detector = htm.handDetector(detectionCon=0.7)
 
 while True:
-    #read webcam frame and run hand detector on the frame
+    # read webcam frame and run hand detector on the frame
     success, img = cap.read()
     img = detector.findHands(img)
     lmList = detector.findPosition(img, draw=False)
 
     if len(lmList) != 0:
-        #if we have found hand landmarks, we need to isolate the specific 
-        #landmarks we are interested in, namely: the pad of the pointer finger
-        #and the pad of the thumb. The distance between these two landmarks
-        #will essentially be the controller of the volume
+        # if we have found hand landmarks, we need to isolate the specific 
+        # landmarks we are interested in, namely: the pad of the pointer finger
+        # and the pad of the thumb. The distance between these two landmarks
+        # will essentially be the controller of the volume
         
         x1, y1 = lmList[4][1], lmList[4][2]
         x2, y2 = lmList[8][1], lmList[8][2]
@@ -41,7 +41,7 @@ while True:
         cv2.line(img, (x1, y1), (x2, y2), (255, 0, 255), 3)
         cv2.circle(img, (cx, cy), 15, (255, 0, 255), cv2.FILLED)
 
-        #calculate distance between said landmarks
+        # calculate distance between said landmarks
         length = math.hypot(x2-x1,y2-y1)
         if length<40:
             cv2.circle(img, (cx, cy), 15, (0, 255, 0), cv2.FILLED)
@@ -55,9 +55,9 @@ while True:
 
         volBar = np.interp(length, [20, 240], [400, 150])
 
-        #depending on the distance of the landmarks, we want to create a screen "volume bar"
-        #to represent how much the volume is changing; depending on the distance, we have 
-        #different colors and percentages of the rectangle are filled 
+        # depending on the distance of the landmarks, we want to create a screen "volume bar"
+        # to represent how much the volume is changing; depending on the distance, we have 
+        # different colors and percentages of the rectangle are filled 
         if volBar<275 and volBar>150:
             cv2.rectangle(img, (50, 150), (85, 400), (0, 255, 0), 4)
             cv2.rectangle(img, (50, int(volBar)), (85, 400), (0, 255, 0), cv2.FILLED)
@@ -71,13 +71,13 @@ while True:
             cv2.rectangle(img, (50, int(volBar)), (85, 400), (130, 0, 75), cv2.FILLED)
             cv2.rectangle(img, (50, 150), (85, 400), (130, 0, 75), 4)
 
-        #standardized the length between landmarks to a small, whole number 
+        # standardized the length between landmarks to a small, whole number 
         lengthModified = round(lengthModified/10)*10
         vol = "set volume output volume " + str(lengthModified)
-        #depending on this number, change the macOS volume
+        # depending on this number, change the macOS volume
         osascript.osascript(vol)
 
-    #output frames per second as well as image with detections displayed
+    # output frames per second as well as image with detections displayed
     cTime = time.time()
     fps = 1 / (cTime - pTime)
     pTime = cTime
